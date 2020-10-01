@@ -43,7 +43,7 @@ class Game(object):
         print("------")
         self.board.print_board()
 
-        # Prompt for automated or computer
+        # Prompt for player or computer
         bot_or_human_val = self.accept_user_input_bot_or_human()
         if bot_or_human_val == 2:
             self.bot = Bot(self.board.check_size())
@@ -64,7 +64,7 @@ class Game(object):
             self.turn = 'X'
 
     def accept_user_input_bot_or_human(self):
-        # Prompt for automated or computer
+        # Prompt for player or computer
         print("Would you like to play against (1) another player or (2) computer?")
 
         valid = False

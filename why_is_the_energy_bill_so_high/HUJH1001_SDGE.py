@@ -7,15 +7,19 @@ import plotly.express as px
 from plotly.subplots import make_subplots
 import plotly.graph_objects as go
 
+import os
+
 # SDGE account: 40126764291
 # https://www.sdge.com/node/15291
 
 
 def ETL_data(df):
 
-    # ETL-ing some data. All these hacky lambda functions are quite ugly - fix. 
-    df['timestamp_end_raw'] = df['interval_end'].apply(lambda x: dt.datetime.strptime(x, '%m/%d/%Y %H:%M'))
-    df['timestamp_start_raw'] = df['interval_start'].apply(lambda x: dt.datetime.strptime(x, '%m/%d/%Y %H:%M'))
+    # ETL-ing some data. All these hacky lambda functions are quite ugly - fix.
+    df['timestamp_end_raw'] = df['interval_end'].apply(
+        lambda x: dt.datetime.strptime(x, '%m/%d/%Y %H:%M'))
+    df['timestamp_start_raw'] = df['interval_start'].apply(
+        lambda x: dt.datetime.strptime(x, '%m/%d/%Y %H:%M'))
 
     df['hour_end'] = df['timestamp_end_raw'].apply(lambda x: x.hour)
     df['hour_start'] = df['timestamp_start_raw'].apply(lambda x: x.hour)
@@ -23,7 +27,8 @@ def ETL_data(df):
     df['month'] = df['timestamp_end_raw'].apply(lambda x: x.month)
     df['year'] = df['timestamp_end_raw'].apply(lambda x: x.year)
     df['day_of_week'] = df['timestamp_end_raw'].apply(lambda x: x.weekday())
-    df['weekend'] = df['day_of_week'].apply(lambda x: 1 if (x == 0 or x == 1) else 0)
+    df['weekend'] = df['day_of_week'].apply(
+        lambda x: 1 if (x == 0 or x == 1) else 0)
 
     df['time_str'] = df['interval_end'].apply(lambda x: pendulum.parse(
         x, strict=False).to_time_string())
@@ -31,7 +36,8 @@ def ETL_data(df):
         x, '%H:%M:%S'))
 
     # Hard-coding in a simplified TOU period very quickly
-    df['tou_period'] =  df['hour_start'].apply(lambda x: 'on_peak' if x in range(14,22) else ('super_off_peak' if x in range(0,7) else 'off_peak'))
+    df['tou_period'] = df['hour_start'].apply(lambda x: 'on_peak' if x in range(
+        14, 22) else ('super_off_peak' if x in range(0, 7) else 'off_peak'))
 
     return df
 
@@ -72,12 +78,12 @@ def plot_monthly_interval_data(df):
 
     for key, month in enumerate(unique_months):
         month_df = df[df['month'] == month]
-        
+
         fig.add_trace(go.Scatter(x=month_df.timestamp_raw,
                                  y=month_df.interval_kW,
                                  mode='lines+markers',
                                  marker_color=month_df['weekend']),
-                                 row=key+1, col=1)
+                      row=key+1, col=1)
 
         # Update x and y axis properties
         fig.update_xaxes(
@@ -89,10 +95,14 @@ def plot_monthly_interval_data(df):
 
     fig.show()
 
+
 if __name__ == "__main__":
 
-    df=pd.read_csv('intervals_40126764291.csv')
-    data=ETL_data(df)
+    print(os.getcwd())
+
+    df = pd.read_csv(
+        "./intervals_40126764291.csv")
+    data = ETL_data(df)
     # data.to_csv('HUJH1001_ETL.csv')
     plot_data(data)
     plot_monthly_data(data)
