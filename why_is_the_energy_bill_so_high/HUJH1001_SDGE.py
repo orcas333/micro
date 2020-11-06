@@ -41,6 +41,39 @@ def ETL_data(df):
 
     return df
 
+# # Node.js express.js
+
+# backend
+# 0. ingesting data - ETL
+# --> DATABASE
+# 1. pull data from database
+# --> can specify different types of endpoints pulling different types/ranges of data
+# --> GET request: returns JSON blob
+# -- in the request for data, include parameters, serve data based on request, only data it needs and nothing else
+# -- REST api
+# ## {
+#     intervals: [{
+#         id:0
+#         timestamp start: 2020-10-01 00:00:00
+#         timestamp end: 2020-10-01 00:01:00
+#         kW: 0.55
+#     }, {
+#         id:1
+#         timestamp start: 2020-10-01 00:00:00
+#         timestamp end: 2020-10-01 00:01:00
+#         kW: 0.53
+#     }, {
+#         id:2
+#         timestamp start: 2020-10-01 00:00:00
+#         timestamp end: 2020-10-01 00:01:00
+#         kW: 0.51
+#     }]
+# }
+##
+
+
+# json file
+
 
 def plot_data(df):
 
@@ -97,8 +130,6 @@ def plot_monthly_interval_data(df):
 
 
 if __name__ == "__main__":
-
-    print(os.getcwd())
 
     df = pd.read_csv(
         "./intervals_40126764291.csv")
