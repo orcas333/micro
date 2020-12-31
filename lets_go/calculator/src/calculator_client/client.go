@@ -5,6 +5,7 @@ import (
 	"fmt"
 	"io"
 	"log"
+	"time"
 
 	"calculatorpb"
 
@@ -23,7 +24,8 @@ func main() {
 	c := calculatorpb.NewCalculatorServiceClient(cc)
 
 	// doSum(c)
-	doPrimeNumberDecomposition(c)
+	// doPrimeNumberDecomposition(c)
+	doComputeAverage(c)
 }
 
 func doSum(c calculatorpb.CalculatorServiceClient) {
@@ -67,4 +69,49 @@ func doPrimeNumberDecomposition(c calculatorpb.CalculatorServiceClient) {
 		}
 		log.Printf("Response from PrimeNumberDecomposition: %v", msg.GetPrimeNum())
 	}
+}
+
+func doComputeAverage(c calculatorpb.CalculatorServiceClient) {
+	fmt.Println("Starting to do a Client Streaming RPC to Compute the Average...")
+
+	requests := []*calculatorpb.ComputeAverageRequest{
+		&calculatorpb.ComputeAverageRequest{
+			Input: 1,
+		},
+		&calculatorpb.ComputeAverageRequest{
+			Input: 2,
+		},
+		&calculatorpb.ComputeAverageRequest{
+			Input: 3,
+		},
+		&calculatorpb.ComputeAverageRequest{
+			Input: 4,
+		},
+		&calculatorpb.ComputeAverageRequest{
+			Input: 5,
+		},
+		&calculatorpb.ComputeAverageRequest{
+			Input: 6,
+		},
+		&calculatorpb.ComputeAverageRequest{
+			Input: 20,
+		},
+	}
+	stream, err := c.ComputeAverage(context.Background())
+	if err != nil {
+		log.Fatalf("error while calling ComputeAverage: %v", err)
+	}
+
+	// we iterate over our slice and send each message individually
+	for _, req := range requests {
+		fmt.Printf("Sending req: %v\n", req)
+		stream.Send(req)
+		time.Sleep(100 * time.Millisecond)
+	}
+
+	res, err := stream.CloseAndRecv()
+	if err != nil {
+		log.Fatalf("error while receiving responses from ComputeAverage: %v", err)
+	}
+	fmt.Printf("ComputeAverage Response: %v\n", res)
 }
