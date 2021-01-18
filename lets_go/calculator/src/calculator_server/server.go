@@ -84,14 +84,14 @@ func (*server) FindMaximum(stream calculatorpb.CalculatorService_FindMaximumServ
 		}
 		if req.Input > currentMax {
 			currentMax = req.Input
-		}
-		result := currentMax
-		sendErr := stream.Send(&calculatorpb.FindMaximumResponse{
-			Result: result,
-		})
-		if sendErr != nil {
-			log.Fatalf("Error while sending data to client: %v", err)
-			return err
+			result := currentMax
+			sendErr := stream.Send(&calculatorpb.FindMaximumResponse{
+				Result: result,
+			})
+			if sendErr != nil {
+				log.Fatalf("Error while sending data to client: %v", err)
+				return err
+			}
 		}
 	}
 }
